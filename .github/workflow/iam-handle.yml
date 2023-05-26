@@ -46,5 +46,5 @@ jobs:
         env:
           PATH: ${{ github.workspace }}/iam.yaml
           DURATION: ${{ github.event.pull_request.labels.name }}
-          START_TIME: ${{ github.event.review.submitted_at }}
+          START_TIME: ${{ github.event.comment.created_at }}
         run: 'aod iam handle -path $PATH -duration $DURATION -start_time $START_TIME'
