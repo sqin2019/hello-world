@@ -17,14 +17,14 @@ jobs:
 
   # An always fail job to prevent AOD request from merging to main.
   do_not_merge:
-    if: '${{ !contains(github.event.pull_request.labels.*.name, ''feature'') && github.event.pull_request.state == ''open'' }}'
+    if: '${{ !contains(github.event.pull_request.labels.*.name, ''feature'') && github.event.review.state == ''approved'' }}'
     runs-on: 'ubuntu-latest'
     steps:
       - id: 'fail'
         run: 'exit 1'
 
   validate:
-    if: '${{ !contains(github.event.pull_request.labels.*.name, ''feature'') && github.event.pull_request.state == ''open'' }}'
+    if: '${{ !contains(github.event.pull_request.labels.*.name, ''feature'') && github.event.review.state == ''approved'' }}'
     uses: 'abcxyz/access-on-demand/.github/workflows/iam-validate.yml@main' # Currently using main, change here to ping the tag/ref here.
     # To specify inputs, change the repository variables.
     # Details: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
