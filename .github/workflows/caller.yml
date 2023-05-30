@@ -7,6 +7,6 @@ on:
 jobs:
   snapshot:
     uses: 'sqin2019/hello-world/.github/workflows/iam-handle.yml@main'
-    with:
-      workload_identity_provider: 'projects/901968413216/locations/global/workloadIdentityPools/github-pool-299b/providers/github-provider'
-      service_account: 'aod-wif-299b-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'
+    # with:
+      # workload_identity_provider: 'projects/901968413216/locations/global/workloadIdentityPools/github-pool-299b/providers/github-provider'
+      # service_account: 'aod-wif-299b-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'

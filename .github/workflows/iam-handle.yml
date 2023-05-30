@@ -2,14 +2,14 @@ name: 'aod-iam-handle'
 on:
   workflow_call:
     inputs:
-      workload_identity_provider:
-        description: 'The full identifier of the Workload Identity Provider, including the project number, pool name, and provider name.'
-        type: 'string'
-        required: true
-      service_account:
-        description: 'Email address or unique identifier of the Google Cloud service account for which to generate credentials.'
-        type: 'string'
-        required: true
+      # workload_identity_provider:
+      #   description: 'The full identifier of the Workload Identity Provider, including the project number, pool name, and provider name.'
+      #   type: 'string'
+      #   required: true
+      # service_account:
+      #   description: 'Email address or unique identifier of the Google Cloud service account for which to generate credentials.'
+      #   type: 'string'
+      #   required: true
       go_version:
         description: 'The version of Golang.'
         type: 'string'
@@ -20,6 +20,16 @@ on:
         type: 'string'
         default: 'latest'
         required: false
+      default_duration:
+        description: 'Default permission expiration duration. Default is 2 hours.'
+        type: 'string'
+        default: '1.5h'
+        required: false
+      path:
+        description: 'IAM request file path. Default is "iam.yaml".'
+        type: 'string'
+        default: 'iam.yaml'
+        required: false
 
 jobs:
   handle:
@@ -29,11 +39,6 @@ jobs:
       id-token: 'write'
     name: 'Handle IAM Request'
     steps:
-      - name: 'print'
-        shell: 'bash'
-        run: echo $JSON
-        env:
-          JSON: ${{ toJSON(github) }}
       - name: 'Checkout'
         uses: 'actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab' # ratchet:actions/checkout@v3
         with:
@@ -54,25 +59,26 @@ jobs:
       #     token_format: 'access_token'
       - name: 'Install AOD CLI'
         run: 'go install github.com/abcxyz/access-on-demand/cmd/aod@${{ inputs.aod_cli_version }}'
-      - name: 'install jq'
-        run: sudo apt-get install -y jq
-      - name: 'versino jq'
-        run: jq --version
+      # - name: 'install jq'
+      #   run: sudo apt-get install -y jq
+      # - name: 'versino jq'
+      #   run: jq --version
       - name: 'get duration'
-        shell: 'bash'
+        # shell: 'bash'
         run: |
           names='${{ toJson(github.event.pull_request.labels.*.name) }}'
           for name in $(echo "$names" | jq -r '.[]'); do
             if [[ $name == duration-* ]]; then
               IFS='-' read -r part1 part2 <<< "$name"
-              echo "DURATION=$part2" >> $GITHUB_ENV
+              echo "LABELED_DURATION=$part2" >> $GITHUB_ENV
               break
             fi
           done
           cat ${{ github.workspace }}/iam.yaml
       - name: 'Run AOD CLI'
-        shell: 'bash'
+        # shell: 'bash'
         env:
-          FILE_PATH: ${{ github.workspace }}/iam.yaml
+          DURATION: ${{ env.LABELED_DURATION || inputs.default_duration }}
+          FILE_PATH: ${{ github.workspace }}/${{ inputs.path }}
           START_TIME: ${{ github.event.pull_request.updated_at }}
-        run: 'aod iam handle -path $FILE_PATH -duration ${{ env.DURATION }} -start-time $START_TIME'
+        run: 'aod iam handle -path $FILE_PATH -duration $DURATION -start-time $START_TIME'
