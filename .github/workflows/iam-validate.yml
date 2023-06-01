@@ -12,39 +12,48 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: 'aod-iam-validate'
+name: 'aod-validate'
 
 # Support pull request triggering event.
 on:
-  workflow_call:
-    inputs:
-      aod_cli_version:
-        description: 'The version of AOD CLI.'
-        type: 'string'
-        default: 'latest'
-        required: false
-      go_version:
-        description: 'The version of Golang.'
-        type: 'string'
-        default: '1.20'
-        required: false
+  pull_request:
+    branches:
+      - 'main'
 
 jobs:
+  do_not_merge:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - id: 'fail'
+        run: |
+          if [ -f "iam.yaml" ]; then
+            echo exit 1
+          fi
+
   validate:
-    runs-on: ubuntu-latest
-    name: 'Validate IAM Request'
+    runs-on: 'ubuntu-latest'
+    name: 'Validate Request'
     steps:
       - name: 'Checkout Triggering Branch'
         uses: 'actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab' # ratchet:actions/checkout@v3
         with:
-          ref: ${{ github.event.ref }}
+          ref: '${{ github.event.pull_request.head.ref }}'
       - name: 'Setup Go'
         uses: 'actions/setup-go@6edd4406fa81c3da01a34fa6f6343087c207a568' # ratchet:actions/setup-go@v3
-        with:
-          go-version: ${{ inputs.go_version }}
-      - name: 'Install AOD CLI'
-        run: 'go install github.com/abcxyz/access-on-demand/cmd/aod@${{ inputs.aod_cli_version }}'
-      - name: 'Run AOD CLI'
+        # with:
+        #   go-version: '${{ inputs.go_version }}'
+      # - name: 'Install AOD CLI'
+      #   run: 'go install github.com/abcxyz/access-on-demand/cmd/aod@latest'
+        # with:
+        #   go-version: '${{ inputs.go_version }}'
+      # Request will not be validated when iam.yaml file does not exist in the
+      # case of a pull_request_review event, instead it prints out a notice.
+      - name: 'Validate IAM Request'
         env:
           FILE_PATH: '${{ github.workspace }}/iam.yaml'
-        run: 'aod iam validate -path $FILE_PATH'
+        run: |
+          if [ -f "iam.yaml" ]; then
+            aod iam validate -path $FILE_PATH
+          else
+            echo "::notice title=IAM Request Validation::Skip because iam.yaml is not found"
+          fi
