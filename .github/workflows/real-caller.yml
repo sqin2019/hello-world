@@ -1,0 +1,37 @@
+name: 'aod-iam-request'
+
+on:
+  push:
+    branches:
+      - 'test'
+  pull_request:
+    types: [labeled]
+  # pull_request_review:
+  #   types: ['submitted']
+
+# Assign values to below envs.
+env:
+  # WIF_PROVIDER: 'projects/921163060412/locations/global/workloadIdentityPools/github-pool-3b39/providers/github-provider'
+  # WIF_SERVICE_ACCOUNT: 'pmap-3b39-ci-sa@pmap-ci.iam.gserviceaccount.com'
+  # Specify the aod cli version or remove this input to use the latest.
+  AOD_CLI_VERSION:
+  # Specify the go version or remove this input to use the default version 1.20.
+  GO_VERISON:
+
+jobs:
+  validate:
+    # Validate the request when the triggering event is pull request.
+    if: github.event_name == 'push'
+    uses: 'sqin2019/hello-world/.github/workflows/iam-validate.yml@main'
+    with:
+      aod_cli_version: '${{ env.AOD_CLI_VERSION }}'
+      go_version: '${{ env.GO_VERISON }}'
+  handle:
+    # Handle the request when the triggering event is pull request review and it is approved.
+    if: github.event_name == 'pull_request' && github.event_name != 'push'
+    uses: 'sqin2019/hello-world/.github/workflows/iam-handle.yml@main'
+    with:
+      # workload_identity_provider: '${{ env.WIF_PROVIDER }}'
+      # service_account: '${{ env.WIF_SERVICE_ACCOUNT }}'
+      aod_cli_version: '${{ env.AOD_CLI_VERSION }}'
+      go_version: '${{ env.GO_VERISON }}'
