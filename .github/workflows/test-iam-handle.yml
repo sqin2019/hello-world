@@ -1,0 +1,37 @@
+# Workflow that validates and handles AOD IAM request.
+name: 'test-iam-handle'
+
+on:
+  pull_request_review:
+    types: ['submitted']
+
+jobs:
+  # Only run when it is approved and it is not a feature change.
+
+  # An always fail job to prevent AOD request from merging to main.
+  do_not_merge:
+    if: '${{ contains(github.event.pull_request.labels.*.name, ''feature'') && github.event.review.state == ''approved'' }}'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - id: 'fail'
+        run: 'exit 1'
+
+  validate:
+    if: '${{ contains(github.event.pull_request.labels.*.name, ''feature'') && github.event.review.state == ''approved'' }}'
+    uses: 'abcxyz/access-on-demand/.github/workflows/iam-validate.yml@main' # Currently using main, change here to ping the tag/ref here.
+    # To specify inputs, change the repository variables.
+    # Details: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
+    # with:
+    #   aod_cli_version: '${{ vars.aod_cli_version }}'
+    #   go_version: '${{ vars.go_version }}'
+
+  handle:
+    needs: 'validate'
+    uses: 'abcxyz/access-on-demand/.github/workflows/iam-handle.yml@main' # Currently using main, change here to ping the tag/ref here.
+    # To specify inputs, change the repository variables.
+    # Details: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
+    with:
+      workload_identity_provider: 'projects/901968413216/locations/global/workloadIdentityPools/github-pool-299b/providers/github-provider'
+      service_account: 'hello-world-299b-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'
+      # aod_cli_version: '${{ vars.aod_cli_version }}'
+      # go_version: '${{ vars.go_version }}'
