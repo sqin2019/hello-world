@@ -1,0 +1,44 @@
+name: "variables"
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  vairables:
+    runs-on: ubuntu-latest
+    name: 'set variables'
+    steps:
+      - run: |
+          gh api \
+          --method POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/sqin2019/hello-world/actions/variables \
+          -f name='logLevel' \
+          -f value='${{ inputs.logLevel }}'
+
+  labels:
+    runs-on: ubuntu-latest
+    name: 'set labels'
+    permissions: write-all
+    steps:
+      - run: |
+          gh api \
+          --method POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/sqin2019/hello-world/labels \
+          -f name='${{ inputs.logLevel }}' \
+          -f description='log level' \
+          -f color='f29513'
