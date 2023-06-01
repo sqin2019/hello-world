@@ -38,10 +38,10 @@ jobs:
           ref: '${{ github.event.pull_request.head.ref }}'
       - name: 'Setup Go'
         uses: 'actions/setup-go@6edd4406fa81c3da01a34fa6f6343087c207a568' # ratchet:actions/setup-go@v3
-        with:
-          go-version: '${{ inputs.go_version }}'
+        # with:
+        #   go-version: '${{ inputs.go_version }}'
       - name: 'Install AOD CLI'
-        run: 'go install github.com/abcxyz/access-on-demand/cmd/aod@${{ inputs.aod_cli_version }}'
+        run: 'go install github.com/abcxyz/access-on-demand/cmd/aod@latest'
       # Request will not be validated when iam.yaml file does not exist in the
       # case of a pull_request_review event, instead it prints out a notice.
       - name: 'Validate IAM Request'
