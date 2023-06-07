@@ -1,16 +1,19 @@
 name: 'aod-iam-request'
 
 on:
-  workflow_dispatch:
+  # pull_request:
+  #     branches:
+  #       - 'main'
+  # workflow_dispatch:
   # pull_request:
   #   types: [labeled]
-  # pull_request_review:
-  #   types: ['submitted']
+  pull_request_review:
+    types: ['submitted']
 
   # Assign values to below envs.
-env:
-  WIF_PROVIDER: 'projects/901968413216/locations/global/workloadIdentityPools/github-pool-299b/providers/github-provider'
-  WIF_SERVICE_ACCOUNT: 'hello-world-299b-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'
+# env:
+#   WIF_PROVIDER: 'projects/901968413216/locations/global/workloadIdentityPools/github-pool-299b/providers/github-provider'
+#   WIF_SERVICE_ACCOUNT: 'hello-world-299b-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'
   # Specify the aod cli version or remove this input to use the latest.
   # AOD_CLI_VERSION:
   # # Specify the go version or remove this input to use the default version 1.20.
@@ -18,37 +21,45 @@ env:
   # WORKFLOW_SHA: 'main'
 
 jobs:
-  set-envs:
-    runs-on: ubuntu-latest
-    # Map a step output to a job output
-    outputs:
-      wif_provider: '${{ steps.wif.outputs.WIF_PROVIDER }}'
-      wif_sa: '${{ steps.wif.outputs.WIF_SERVICE_ACCOUNT }}'
-      # aod_cli_version:
-      # go_version:
-    steps:
-      - id: 'wif'
-        run: |
-          echo "WIF_PROVIDER=${{ env.WIF_PROVIDER }}" >> "$GITHUB_OUTPUT"
-          echo "WIF_SERVICE_ACCOUNT=${{ env.WIF_SERVICE_ACCOUNT }}" >> "$GITHUB_OUTPUT"
+  # set-envs:
+  #   runs-on: ubuntu-latest
+  #   # Map a step output to a job output
+  #   outputs:
+  #     wif_provider: '${{ steps.wif.outputs.WIF_PROVIDER }}'
+  #     wif_sa: '${{ steps.wif.outputs.WIF_SERVICE_ACCOUNT }}'
+  #     # aod_cli_version:
+  #     # go_version:
+  #   steps:
+  #     - id: 'wif'
+  #       run: |
+  #         echo "WIF_PROVIDER=${{ env.WIF_PROVIDER }}" >> "$GITHUB_OUTPUT"
+  #         echo "WIF_SERVICE_ACCOUNT=${{ env.WIF_SERVICE_ACCOUNT }}" >> "$GITHUB_OUTPUT"
 # jobs:
 #   set-envs:
 #     uses: 'sqin2019/hello-world/.github/workflows/set-envs.yml@main'
-
   validate:
-    uses: 'sqin2019/hello-world/.github/workflows/iam-validate.yml@main'
+    uses: 'abcxyz/access-on-demand/.github/workflows/validate.yml@main' # Currently using main, change here to ping the tag.
+    # To specify inputs, change the repository variables.
+    # Details: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
     with:
-      aod_cli_version: '${{ vars.AOD_CLI_VERSION }}'
-      # go_version: '${{ vars.GO_VERISON }}'
-  handle:
-    # Handle the request when the triggering event is pull request review and it is approved.
-    if: ${{ github.event_name == 'pull_request' }}
-    needs:
-      # - 'validate'
-      - 'set-envs'
-    uses: 'sqin2019/hello-world/.github/workflows/iam-handle.yml@main'
-    with:
-      workload_identity_provider: '${{ needs.set-envs.outputs.wif_provider }}'
-      service_account: '${{ needs.set-envs.outputs.wif_sa }}'
-      aod_cli_version: '${{ vars.AOD_CLI_VERSION }}'
-      # go_version: '${{ vars.GO_VERISON }}'
+      aod_cli_version: '${{ vars.aod_cli_version || ''latest'' }}'
+      go_version: '${{ vars.go_version || ''1.20'' }}'
+  # check:
+  #   uses: 'sqin2019/hello-world/.github/workflows/iam-validate.yml@failcheck'
+  # handle:
+  #   needs: 'check.validate'
+    # with:
+    #   aod_cli_version: '${{ vars.AOD_CLI_VERSION }}'
+    #   # go_version: '${{ vars.GO_VERISON }}'
+  # handle:
+  #   # Handle the request when the triggering event is pull request review and it is approved.
+  #   if: ${{ github.event_name == 'pull_request' }}
+  #   needs:
+  #     # - 'validate'
+  #     - 'set-envs'
+  #   uses: 'sqin2019/hello-world/.github/workflows/iam-handle.yml@main'
+  #   with:
+  #     workload_identity_provider: '${{ needs.set-envs.outputs.wif_provider }}'
+  #     service_account: '${{ needs.set-envs.outputs.wif_sa }}'
+  #     aod_cli_version: '${{ vars.AOD_CLI_VERSION }}'
+  #     # go_version: '${{ vars.GO_VERISON }}'
