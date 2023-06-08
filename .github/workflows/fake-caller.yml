@@ -2,8 +2,7 @@ name: 'aod-iam-request'
 
 on:
   workflow_dispatch:
-  # pull_request:
-  #   types: [labeled]
+  pull_request:
   # pull_request_review:
   #   types: ['submitted']
 
@@ -35,14 +34,14 @@ jobs:
 #   set-envs:
 #     uses: 'sqin2019/hello-world/.github/workflows/set-envs.yml@main'
 
-  validate:
-    uses: 'sqin2019/hello-world/.github/workflows/iam-validate.yml@main'
-    with:
-      aod_cli_version: '${{ vars.AOD_CLI_VERSION }}'
-      # go_version: '${{ vars.GO_VERISON }}'
+  # validate:
+  #   uses: 'sqin2019/hello-world/.github/workflows/iam-validate.yml@main'
+  #   with:
+  #     aod_cli_version: '${{ vars.AOD_CLI_VERSION }}'
+  #     # go_version: '${{ vars.GO_VERISON }}'
   handle:
-    # Handle the request when the triggering event is pull request review and it is approved.
-    if: ${{ github.event_name == 'pull_request' }}
+    # # Handle the request when the triggering event is pull request review and it is approved.
+    # if: ${{ github.event_name == 'pull_request' }}
     needs:
       # - 'validate'
       - 'set-envs'
@@ -50,5 +49,5 @@ jobs:
     with:
       workload_identity_provider: '${{ needs.set-envs.outputs.wif_provider }}'
       service_account: '${{ needs.set-envs.outputs.wif_sa }}'
-      aod_cli_version: '${{ vars.AOD_CLI_VERSION }}'
+      # aod_cli_version: '${{ vars.AOD_CLI_VERSION }}'
       # go_version: '${{ vars.GO_VERISON }}'

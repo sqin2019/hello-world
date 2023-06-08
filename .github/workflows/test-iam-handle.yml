@@ -2,11 +2,11 @@
 name: 'test-iam-handle'
 
 on:
-  pull_request:
-    branches:
-      - 'main'
-    paths:
-      - 'iam.yaml'
+  pull_request_review:
+    # branches:
+    #   - 'main'
+    # paths:
+    #   - 'iam.yaml'
 
 concurrency:
   group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}-iam-request-handle'
