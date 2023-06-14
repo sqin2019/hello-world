@@ -1,0 +1,66 @@
+name: 'expire'
+on:
+  # schedule:
+  #   - cron: '*/30 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: 'read'
+  pull-requests: 'write'
+jobs:
+  expire:
+    runs-on: 'ubuntu-latest'
+    steps:
+      # - name: 'mint token'
+      #   id: 'mint-token'
+      #   uses: 'abcxyz/github-token-minter/.github/actions/mint-token@042214a5154c4ae64da75821011912c0f183f963'
+      #   with:
+      #     wif_provider: '${{ vars.TOKEN_MINTER_WIF_PROVIDER }}'
+      #     wif_service_account: '${{ vars.TOKEN_MINTER_WIF_SERVICE_ACCOUNT }}'
+      #     service_audience: '${{ vars.TOKEN_MINTER_SERVICE_AUDIENCE }}'
+      #     service_url: '${{ vars.TOKEN_MINTER_SERVICE_URL }}'
+      #     requested_permissions: |-
+      #       {
+      #         "repositories": ["breakglass"],
+      #         "permissions": {
+      #           "pulls": "write"
+      #         }
+      #       }
+      - uses: 'actions/github-script@98814c53be79b1d30f795b907e553d8679345975' # ratchet:actions/github-script@v6
+        with:
+          result-encoding: 'string'
+          retries: 3
+          # github-token: '${{ steps.mint-token.outputs.token }}'
+          script: |-
+            const cutoffMs = 7 * 24 * 60 * 60 * 1000
+            const now = new Date();
+            const pulls = await github.rest.pulls.list({
+              owner: 'sqin2019',
+              repo: 'hello-world',
+              state: 'open',
+              per_page: 100,
+            });
+
+            if (!pulls) {
+              return;
+            }
+
+            core.info(`Found ${pulls.data.length} pulls`);
+
+            pulls.data.forEach(async (pull) => {
+
+              // Check if pulls is within the cutoff threshold
+              const updatedAt = new Date(Date.parse(pull['updated_at']));
+              if (now.getTime() - updatedAt.getTime() < cutoffMs) {
+                core.info(`Skipping #${pull['number']} (${pull['title']}) - within threshold`);
+                return;
+              }
+
+              core.info(`Closing #${pull['number']} (${pull['title']})`);
+
+              await github.rest.pulls.update({
+                owner: 'sqin2019',
+                repo: 'hello-world',
+                pull_number: pull['number'],
+                state: 'closed',
+              });
+            });

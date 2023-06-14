@@ -1,0 +1,19 @@
+name: 'cleanup'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  set-envs:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          gh api graphql -F owner='abcxyz' -F name='aod-template' -f query='
+            query($name: String!, $owner: String!) {
+              repository(owner: $owner, name: $name) {
+                releases(last: 3) {
+                  nodes { tagName }
+                }
+              }
+            }
+          '
