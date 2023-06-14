@@ -1,0 +1,12 @@
+name: 'expire_caller'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    uses: 'sqin2019/hello-world/.github/workflows/expire.yml@main'
+    with:
+      owner: 'sqin2019'
+      repo: 'hello-world'
+      cutoffDays: 9
