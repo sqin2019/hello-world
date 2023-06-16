@@ -4,9 +4,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  validate:
+  close_pr:
+    permissions:
+      pull-requests: 'write'
     uses: 'sqin2019/hello-world/.github/workflows/expire.yml@main'
+    # uses: 'abcxyz/access-on-demand/.github/workflows/expire.yml@main'
     with:
-      owner: 'sqin2019'
-      repo: 'hello-world'
-      cutoffDays: 9
+      repo: '${{ github.repository }}'
+      expiryHours: 1
