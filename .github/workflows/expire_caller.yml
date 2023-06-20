@@ -11,4 +11,4 @@ jobs:
     # uses: 'abcxyz/access-on-demand/.github/workflows/expire.yml@main'
     with:
       repo: 'hello-world'
-      expiryHours: 1
+      expiryHours: '${{ vars.expiry_hours || 24 }}'
