@@ -10,5 +10,5 @@ jobs:
     uses: 'sqin2019/hello-world/.github/workflows/expire.yml@main'
     # uses: 'abcxyz/access-on-demand/.github/workflows/expire.yml@main'
     with:
-      repo: '${{ github.repository }}'
+      repo: 'hello-world/'
       expiryHours: 1
