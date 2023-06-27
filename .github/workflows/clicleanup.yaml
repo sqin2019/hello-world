@@ -1,0 +1,78 @@
+# Reusable workflow that handles CLI request cleanup.
+name: 'aod-cleanup'
+
+# Support 'pull_request' triggering events.
+on:
+  workflow_call:
+    inputs:
+      aod_cli_version:
+        description: 'The version of AOD CLI.'
+        type: 'string'
+        default: 'latest'
+        required: false
+      go_version:
+        description: 'The version of Golang.'
+        type: 'string'
+        default: '1.20'
+        required: false
+
+jobs:
+  approved:
+    runs-on: 'ubuntu-latest'
+    permissions:
+      pull-requests: 'read'
+    outputs:
+      result: ${{ steps.approved.outputs.result }}
+    steps:
+      - id: 'approved'
+        uses: 'actions/github-script@98814c53be79b1d30f795b907e553d8679345975' # ratchet:actions/github-script@v6
+        with:
+          result-encoding: 'string'
+          retries: 3
+          script: |-
+            const parts = String('${{ github.repository }}').split('/')
+            const repoOwner = parts[0]
+            const repoName = parts[1]
+            const reviews = await github.rest.pulls.listReviews({
+              owner: repoOwner,
+              repo: repoName,
+              pull_number: '${{ event.number }}',
+            });
+
+            if (!reviews) {
+              return "false";
+            }
+
+            core.info(`Found ${reviews.data.length} reviews`);
+
+            reviews.data.forEach(async (review) => {
+              if (review.review.state === 'approved')
+                return "true";
+              }
+            });
+            return "false";
+
+  # Only run CLI request cleanup when it is approved.
+  cleanup:
+    needs: 'approved'
+    if: '${{ needs.approved.outputs.result == ''true'' }}'
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    name: 'Handle CLI Request Cleanup'
+    steps:
+      - name: 'Checkout Triggering Branch'
+        uses: 'actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab' # ratchet:actions/checkout@v3
+        with:
+          ref: '${{ github.event.pull_request.head.ref }}'
+      - name: 'Setup Go'
+        uses: 'actions/setup-go@6edd4406fa81c3da01a34fa6f6343087c207a568' # ratchet:actions/setup-go@v3
+        with:
+          go-version: '${{ inputs.go_version }}'
+      - name: 'Install AOD CLI'
+        run: 'go install github.com/abcxyz/access-on-demand/cmd/aod@${{ inputs.aod_cli_version }}'
+      - name: 'Handle cleanup'
+        env:
+          FILE_PATH: '${{ github.workspace }}/cli.yaml'
+        run: 'aod cli handle -path $FILE_PATH' -cleanup

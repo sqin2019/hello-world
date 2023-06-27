@@ -1,0 +1,14 @@
+name: 'clicleanup_caller'
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: 'closed'
+    paths: 'cli.yaml'
+
+jobs:
+  close_pr:
+    permissions:
+      pull-requests: 'write'
+    # uses: 'sqin2019/hello-world/.github/workflows/expire.yml@main'
+    uses: 'abcxyz/access-on-demand/.github/workflows/clicleanup.yml@main'
