@@ -22,7 +22,7 @@ jobs:
     permissions:
       pull-requests: 'read'
     outputs:
-      result: ${{ steps.approved.outputs.result }}
+      result: '${{ steps.approved.outputs.result }}'
     steps:
       - id: 'approved'
         uses: 'actions/github-script@98814c53be79b1d30f795b907e553d8679345975' # ratchet:actions/github-script@v6
@@ -36,7 +36,7 @@ jobs:
             const reviews = await github.rest.pulls.listReviews({
               owner: repoOwner,
               repo: repoName,
-              pull_number: '${{ event.number }}',
+              pull_number: '${{ github.event.number }}',
             });
 
             if (!reviews) {
@@ -45,13 +45,15 @@ jobs:
 
             core.info(`Found ${reviews.data.length} reviews`);
 
-            reviews.data.forEach(async (review) => {
-              if (review.review.state === 'approved')
+            reviews.data.forEach(review=> {
+              if (review.state.toLowerCase() === 'approved') {
+                core.info(`PR is approved`);
                 return "true";
               }
             });
             return "false";
-
+      - name: Get result
+        run: echo "${{steps.approved.outputs.result}}"
   # Only run CLI request cleanup when it is approved.
   cleanup:
     needs: 'approved'
@@ -75,4 +77,4 @@ jobs:
       - name: 'Handle cleanup'
         env:
           FILE_PATH: '${{ github.workspace }}/cli.yaml'
-        run: 'aod cli handle -path $FILE_PATH' -cleanup
+        run: 'aod cli cleanup -path $FILE_PATH'
