@@ -36,7 +36,7 @@ jobs:
             const reviews = await github.rest.pulls.listReviews({
               owner: repoOwner,
               repo: repoName,
-              pull_number: '${{ event.number }}',
+              pull_number: '${{ github.event.number }}',
             });
 
             if (!reviews) {
