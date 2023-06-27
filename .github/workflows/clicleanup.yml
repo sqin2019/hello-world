@@ -36,7 +36,7 @@ jobs:
             const reviews = await github.rest.pulls.listReviews({
               owner: repoOwner,
               repo: repoName,
-              pull_number: '${{ event.number }}',
+              pull_number: '${{ github.event.number }}',
             });
 
             if (!reviews) {
@@ -46,12 +46,12 @@ jobs:
             core.info(`Found ${reviews.data.length} reviews`);
 
             reviews.data.forEach(async (review) => {
-              if (review.review.state === 'approved')
+              if (review.state.toLowerCase() === 'approved') {
+                core.info(`PR is approved`);
                 return "true";
               }
             });
             return "false";
-
   # Only run CLI request cleanup when it is approved.
   cleanup:
     needs: 'approved'
@@ -75,4 +75,4 @@ jobs:
       - name: 'Handle cleanup'
         env:
           FILE_PATH: '${{ github.workspace }}/cli.yaml'
-        run: 'aod cli handle -path $FILE_PATH' -cleanup
+        run: 'aod cli cleanup -path $FILE_PATH'
