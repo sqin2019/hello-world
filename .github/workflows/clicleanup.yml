@@ -20,10 +20,10 @@ jobs:
   mergeable:
     runs-on: 'ubuntu-latest'
     steps:
-      - run: echo ${{ github.event.mergeable }}
+      - run: echo '${{ github.event.mergeable }}'
   cleanup:
     # Only run CLI request cleanup when it is mergeable/approved.
-    if: '${{ github.event.mergeable == true }}'
+    if: ${{ github.event.mergeable}}
     runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
