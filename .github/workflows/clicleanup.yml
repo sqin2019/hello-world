@@ -44,14 +44,14 @@ jobs:
             }
 
             core.info(`Found ${reviews.data.length} reviews`);
-            const result = "false";
-            reviews.data.forEach(async (review) => {
+
+            reviews.data.forEach(review=> {
               if (review.state.toLowerCase() === 'approved') {
                 core.info(`PR is approved`);
-                result = "true";
+                return "true";
               }
             });
-            return result;
+            return "false";
       - name: Get result
         run: echo "${{steps.approved.outputs.result}}"
   # Only run CLI request cleanup when it is approved.
