@@ -17,6 +17,10 @@ on:
         required: false
 
 jobs:
+  mergeable:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - run: echo ${{ github.event.mergeable }}
   cleanup:
     # Only run CLI request cleanup when it is mergeable/approved.
     if: '${{ github.event.mergeable == true }}'
