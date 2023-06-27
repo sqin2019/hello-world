@@ -46,7 +46,8 @@ jobs:
             core.info(`Found ${reviews.data.length} reviews`);
 
             reviews.data.forEach(async (review) => {
-              if (review.state === 'approved') {
+              if (review.state.toLowerCase() === 'approved') {
+                core.info(`PR is approved`);
                 return "true";
               }
             });
