@@ -52,6 +52,8 @@ jobs:
               }
             });
             return "false";
+      - name: Get result
+        run: echo "${{steps.approved.outputs.result}}"
   # Only run CLI request cleanup when it is approved.
   cleanup:
     needs: 'approved'
