@@ -17,45 +17,13 @@ on:
         required: false
 
 jobs:
-  approved:
+  mergeable:
     runs-on: 'ubuntu-latest'
-    permissions:
-      pull-requests: 'read'
-    outputs:
-      result: ${{ steps.approved.outputs.result }}
     steps:
-      - id: 'approved'
-        uses: 'actions/github-script@98814c53be79b1d30f795b907e553d8679345975' # ratchet:actions/github-script@v6
-        with:
-          result-encoding: 'string'
-          retries: 3
-          script: |-
-            const parts = String('${{ github.repository }}').split('/')
-            const repoOwner = parts[0]
-            const repoName = parts[1]
-            const reviews = await github.rest.pulls.listReviews({
-              owner: repoOwner,
-              repo: repoName,
-              pull_number: '${{ event.number }}',
-            });
-
-            if (!reviews) {
-              return "false";
-            }
-
-            core.info(`Found ${reviews.data.length} reviews`);
-
-            reviews.data.forEach(async (review) => {
-              if (review.review.state === 'approved')
-                return "true";
-              }
-            });
-            return "false";
-
-  # Only run CLI request cleanup when it is approved.
+      - run: echo '${{ github.event.pull_request.mergeable }}'
   cleanup:
-    needs: 'approved'
-    if: '${{ needs.approved.outputs.result == ''true'' }}'
+    # Only run CLI request cleanup when it is mergeable/approved.
+    if: '${{ github.event.pull_request.mergeable}}'
     runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
@@ -75,4 +43,4 @@ jobs:
       - name: 'Handle cleanup'
         env:
           FILE_PATH: '${{ github.workspace }}/cli.yaml'
-        run: 'aod cli handle -path $FILE_PATH' -cleanup
+        run: 'aod cli cleanup -path $FILE_PATH'
