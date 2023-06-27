@@ -51,7 +51,9 @@ jobs:
                 return "true";
               }
             });
+            core.info(`shouldn't running`);
             return "false";
+            core.info(`shouldn't running2`);
       - name: Get result
         run: echo "${{steps.approved.outputs.result}}"
   # Only run CLI request cleanup when it is approved.
