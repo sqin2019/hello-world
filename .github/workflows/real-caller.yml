@@ -1,89 +1,24 @@
-name: 'aod-iam-request'
+# Workflow that handles AOD requests.
+name: 'aod-handle'
 
 on:
-  # push:
-  #   branches:
-  #     - 'test'
-  # pull_request:
-  #   branches:
-  #     - 'main'
   pull_request_review:
-    types: ['dismissed']
+    types: ['submitted']
 
-# Assign values to below envs.
-env:
-  WIF_PROVIDER: 'projects/901968413216/locations/global/workloadIdentityPools/github-pool-299b/providers/github-provider'
-  WIF_SERVICE_ACCOUNT: 'hello-world-299b-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'
-  AOD_CLI_VERSION: 'latest'
-  GO_VERISON: '1.20'
-  # VALIDATE_WORKFLOW_TAG: 'main'
-  # HANDLE_WORKFLOW_TAG: 'main'
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}-aod-request-handle'
+  cancel-in-progress: true
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
-    # Map a step output to a job output
-    outputs:
-      aod: '${{ steps.changed-file.outputs.any_changed }}'
-    steps:
-      - name: 'Checkout Triggering Branch'
-        uses: 'actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab' # ratchet:actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
-      - id: 'changed-file'
-        uses: 'tj-actions/changed-files@84ed30e2f4daf616144de7e0c1db59d5b33025e3' # ratchet:tj-actions/changed-files@v35
-        with:
-          files: |
-            iam.yaml
-
-  always-fail:
-    needs: check
-    if: '${{ needs.check.outputs.aod == ''true'' }}'
-    runs-on: ubuntu-latest
-    steps:
-      - id: 'fail'
-        run: exit 1
-
-  set_envs:
-    needs: check
-    if: '${{ needs.check.outputs.aod == ''true'' }}'
-    runs-on: ubuntu-latest
-    permissions: {}
-    # Map a step output to a job output
-    outputs:
-      wif_provider: '${{ steps.wif.outputs.WIF_PROVIDER }}'
-      wif_sa: '${{ steps.wif.outputs.WIF_SERVICE_ACCOUNT }}'
-      aod_cli_version: '${{ steps.wif.outputs.AOD_CLI_VERSION }}'
-      go_version: '${{ steps.wif.outputs.GO_VERISON }}'
-      # validate_wf_tag: '${{ steps.wif.outputs.VALIDATE_WORKFLOW_TAG }}'
-      # handle_wf_tag: '${{ steps.wif.outputs.HANDLE_WORKFLOW_TAG }}'
-    steps:
-      - id: 'wif'
-        run: |
-          echo "WIF_PROVIDER=${{ env.WIF_PROVIDER }}" >> "$GITHUB_OUTPUT"
-          echo "WIF_SERVICE_ACCOUNT=${{ env.WIF_SERVICE_ACCOUNT }}" >> "$GITHUB_OUTPUT"
-          echo "AOD_CLI_VERSION=${{ env.AOD_CLI_VERSION }}" >> "$GITHUB_OUTPUT"
-          echo "GO_VERISON=${{ env.GO_VERISON }}" >> "$GITHUB_OUTPUT"
-          # echo "VALIDATE_WORKFLOW_TAG=${{ env.VALIDATE_WORKFLOW_TAG }}" >> "$GITHUB_OUTPUT"
-          # echo "HANDLE_WORKFLOW_TAG=${{ env.HANDLE_WORKFLOW_TAG }}" >> "$GITHUB_OUTPUT"
-
-  validate:
-    # Validate the request when the triggering event is pull_request_review or pull request.
-    if: '${{ contains(fromJSON(''["pull_request_review", "pull_request"]''), github.event_name) }}'
-    needs: 'set_envs'
-    uses: 'abcxyz/access-on-demand/.github/workflows/iam-validate.yml@main'
-    with:
-      aod_cli_version: '${{ needs.set_envs.outputs.aod_cli_version }}'
-      go_version: '${{ needs.set_envs.outputs.go_version }}'
   handle:
-    # Handle the request when the triggering event is pull request review and it is approved.
-    if: '${{ github.event_name == ''pull_request_review'' && github.event.review.state == ''approved'' }}'
-    needs:
-      - 'set_envs'
-      - 'validate'
-    uses: 'abcxyz/access-on-demand/.github/workflows/iam-handle.yml@main'
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    uses: 'sqin2019/hello-world/.github/workflows/iam-handle.yml@main' # Currently using main, change here to ping the tag.
+    # To specify inputs, change the repository variables.
+    # Details: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
     with:
-      workload_identity_provider: '${{ needs.set_envs.outputs.wif_provider }}'
-      service_account: '${{ needs.set_envs.outputs.wif_sa }}'
-      aod_cli_version: '${{ needs.set_envs.outputs.aod_cli_version }}'
-      go_version: '${{ needs.set_envs.outputs.go_version }}'
+      workload_identity_provider: 'projects/901968413216/locations/global/workloadIdentityPools/github-pool-299b/providers/github-provider'
+      service_account: 'hello-world-299b-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'
+      aod_cli_version: '${{ vars.aod_cli_version || ''latest'' }}'
+      go_version: '${{ vars.go_version || ''1.20'' }}'

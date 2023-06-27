@@ -25,10 +25,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - id: 'fail'
-        run: |
-          if [ -f "iam.yaml" ]; then
-            echo exit 1
-          fi
+        run: 'exit 1'
 
   validate:
     runs-on: 'ubuntu-latest'
