@@ -45,12 +45,12 @@ jobs:
 
             core.info(`Found ${reviews.data.length} reviews`);
 
-            reviews.data.forEach(review=> {
+            for(review of reviews.data) {
               if (review.state.toLowerCase() === 'approved') {
                 core.info(`PR is approved`);
                 return "true";
               }
-            });
+            };
             return "false";
       - name: Get result
         run: echo "${{steps.approved.outputs.result}}"
