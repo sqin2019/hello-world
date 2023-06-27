@@ -10,5 +10,7 @@ jobs:
   close_pr:
     permissions:
       pull-requests: 'write'
+      contents: 'read'
+      id-token: 'write'
     uses: 'sqin2019/hello-world/.github/workflows/clicleanup.yml@main'
     # uses: 'abcxyz/access-on-demand/.github/workflows/clicleanup.yml@main'
