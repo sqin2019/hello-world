@@ -51,7 +51,6 @@ jobs:
               }
             });
             return "false";
-
   # Only run CLI request cleanup when it is approved.
   cleanup:
     needs: 'approved'
