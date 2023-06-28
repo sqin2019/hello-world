@@ -36,7 +36,7 @@ jobs:
           reviewDecision="$(gh api graphql -F owner=$OWNER -F name=$REPO_NAME -F pr_number=$PR_NUMBER -f query='
             query($name: String!, $owner: String!, $pr_number: String!) {
               repository(owner: $owner, name: $name) {
-                pullRequest(number: $number) {
+                pullRequest(number: $pr_number) {
                   reviewDecision
                 }
               }
