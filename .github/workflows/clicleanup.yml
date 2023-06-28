@@ -25,7 +25,7 @@ jobs:
       - id: 'repo_name'
         env:
           REPO: '${{ github.repository }}'
-        run: echo "::set-output name=REPO_NAME::${REPO##*/}"
+        run: echo "REPO_NAME=${REPO##*/}" >> $GITHUB_OUTPUT
       - id: 'get_review_decision'
         env:
           OWNER: '${{ github.repository_owner }}'
