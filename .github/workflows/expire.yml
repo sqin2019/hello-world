@@ -1,7 +1,6 @@
 name: 'expire'
+
 on:
-  # schedule:
-  #   - cron: '*/30 * * * *'
   workflow_call:
     inputs:
       repo:
@@ -9,12 +8,14 @@ on:
         type: 'string'
         required: true
       expiry_hours:
-        description: 'The cutoff days.'
+        description: 'The number of hours to keep an AOD PR open since last updated.'
         type: 'number'
-        default: 7
+        default: 24
         required: false
+
 permissions:
   pull-requests: 'write'
+
 jobs:
   expire:
     runs-on: 'ubuntu-latest'
@@ -23,7 +24,6 @@ jobs:
         with:
           result-encoding: 'string'
           retries: 3
-          # github-token: '${{ steps.mint-token.outputs.token }}'
           script: |-
             const parts = String('${{ inputs.repo }}').split('/')
             if (parts.length != 2) {
@@ -31,9 +31,7 @@ jobs:
             }
             const repoOwner = parts[0]
             const repoName = parts[1]
-            const cutoffMs = ${{ inputs.expiryHours }} * 24 * 60 * 60 * 1000
-            core.info(`repoOwner: ${repoOwner}; repoName (${repoName})`);
-
+            const cutoffMs = ${{ inputs.expiry_hours }} * 60 * 60 * 1000
             const now = new Date();
             const pulls = await github.rest.pulls.list({
               owner: repoOwner,
@@ -54,10 +52,12 @@ jobs:
                 repo: repoName,
                 pull_number: pull['number'],
               })
+
               // Check if the PR is an AOD request by checking the AOD file existence.
               if (files.data.find(f => (f.filename === 'iam.yaml' || f.filename === 'cli.yaml'))) {
-                // Check if pulls is within the cutoff threshold
+                // Check if the PR is within the cutoff threshold
                 const updatedAt = new Date(Date.parse(pull['updated_at']));
+
                 if (now.getTime() - updatedAt.getTime() < cutoffMs) {
                   core.info(`Skipping #${pull['number']} (${pull['title']}) - within threshold`);
                   return;
@@ -72,6 +72,6 @@ jobs:
                   state: 'closed',
                 });
               } else {
-                core.info(`Skipping #${pull['number']} (${pull['title']}) - is not an AOD request`);
+                core.info(`Skipping #${pull['number']} (${pull['title']}) - not an AOD request`);
               }
             });
