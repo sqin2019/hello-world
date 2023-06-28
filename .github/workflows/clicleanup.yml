@@ -44,7 +44,6 @@ jobs:
           ' --jq '.data.repository.pullRequest.reviewDecision')"
 
           echo REVIEW_DECISION=$reviewDecision >> $GITHUB_OUTPUT
-          echo $REVIEW_DECISION
 
   cleanup:
     needs: 'review_status'
