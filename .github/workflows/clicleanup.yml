@@ -31,10 +31,10 @@ jobs:
           OWNER: '${{ github.repository_owner }}'
           REPO_NAME: '${{ steps.repo_name.outputs.REPO_NAME }}'
           PR_NUMBER: '${{ github.event.number }}'
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: '${{ github.token }}'
         run: |
           reviewDecision="$(gh api graphql -F owner=$OWNER -F name=$REPO_NAME -F pr_number=$PR_NUMBER -f query='
-            query($name: String!, $owner: String!, $pr_number: String!) {
+            query($name: String!, $owner: String!, $pr_number: Int!) {
               repository(owner: $owner, name: $name) {
                 pullRequest(number: $pr_number) {
                   reviewDecision
