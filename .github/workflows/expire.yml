@@ -8,7 +8,7 @@ on:
         description: 'The owner and repository name. For example, Codertocat/Hello-World'
         type: 'string'
         required: true
-      expiryHours:
+      expiry_hours:
         description: 'The cutoff days.'
         type: 'number'
         default: 7
