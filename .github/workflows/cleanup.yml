@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          gh api graphql -F owner='abcxyz' -F name='aod-template' -f query='
-            query($name: String!, $owner: String!) {
+          gh api graphql -F owner='abcxyz' -F name='access-on-demand' -F pr_number='1410639531' -f query='
+            query($name: String!, $owner: String!, $pr_number: String!) {
               repository(owner: $owner, name: $name) {
-                releases(last: 3) {
-                  nodes { tagName }
+                pullRequest(number: $number) {
+                  reviewDecision
                 }
               }
             }

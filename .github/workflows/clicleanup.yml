@@ -17,13 +17,36 @@ on:
         required: false
 
 jobs:
-  mergeable:
+  review_status:
     runs-on: 'ubuntu-latest'
+    outputs:
+      REVIEW_DECISION: '${{ steps.get_review_decision.outputs.REVIEW_DECISION }}'
     steps:
-      - run: echo '${{ github.event.pull_request.mergeable }}'
+      - id: 'repo_name'
+        env:
+          REPO: '${{ github.repository }}'
+        run: echo "::set-output name=REPO_NAME::${REPO##*/}"
+      - id: 'get_review_decision'
+        env:
+          OWNER: '${{ github.repository_owner }}'
+          REPO_NAME: '${{ steps.repo_name.outputs.REPO_NAME }}'
+          PR_NUMBER: '${{ github.event.number }}'
+        run: |
+          reviewDecision="$(gh api graphql -F owner=$OWNER -F name=$REPO_NAME -F pr_number=$PR_NUMBER -f query='
+            query($name: String!, $owner: String!, $pr_number: String!) {
+              repository(owner: $owner, name: $name) {
+                pullRequest(number: $number) {
+                  reviewDecision
+                }
+              }
+            }
+          ' --jq '.data.repository.pullRequest.reviewDecision')"
+
+          echo REVIEW_DECISION=$reviewDecision >> $GITHUB_OUTPUT
+
   cleanup:
-    # Only run CLI request cleanup when it is mergeable (approved and no conflict with the base branch).
-    if: '${{ github.event.pull_request.mergeable}}'
+    needs: 'review_status'
+    if: '${{ needs.review_status.outputs.REVIEW_DECISION == ''APPROVED'' }}'
     runs-on: 'ubuntu-latest'
     permissions:
       contents: 'read'
