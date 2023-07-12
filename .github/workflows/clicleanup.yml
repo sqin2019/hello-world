@@ -28,12 +28,12 @@ jobs:
         run: echo "REPO_NAME=${REPO##*/}" >> $GITHUB_OUTPUT
       - id: 'get_review_decision'
         env:
-          OWNER: '${{ github.repository_owner }}'
-          REPO_NAME: '${{ steps.repo_name.outputs.REPO_NAME }}'
-          PR_NUMBER: '${{ github.event.number }}'
-          GH_TOKEN: '${{ github.token }}'
+          # OWNER: '${{ github.repository_owner }}'
+          # REPO_NAME: '${{ steps.repo_name.outputs.REPO_NAME }}'
+          # PR_NUMBER: '${{ github.event.number }}'
+          # GH_TOKEN: '${{ github.token }}'
         run: |
-          reviewDecision="$(gh api graphql -F owner=$OWNER -F name=$REPO_NAME -F pr_number=$PR_NUMBER -f query='
+          reviewDecision="$(gh api graphql -F owner=${{ github.repository_owner }} -F name=${${{ github.repository }}##*/} -F pr_number=${{ github.event.number }} -f query='
             query($name: String!, $owner: String!, $pr_number: Int!) {
               repository(owner: $owner, name: $name) {
                 pullRequest(number: $pr_number) {
