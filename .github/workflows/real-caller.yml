@@ -2,8 +2,10 @@
 name: 'aod-handle'
 
 on:
-  pull_request_review:
-    types: ['submitted']
+  pull_request:
+    types: [labeled]
+  # pull_request_review:
+  #   types: ['submitted']
 
 concurrency:
   group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}-aod-request-handle'
@@ -14,7 +16,7 @@ jobs:
     permissions:
       contents: 'read'
       id-token: 'write'
-      pull-requests: 'read'
+      pull-requests: 'write'
     uses: 'sqin2019/hello-world/.github/workflows/iam-handle.yml@main' # Currently using main, change here to ping the tag.
     # To specify inputs, change the repository variables.
     # Details: https://docs.github.com/en/actions/learn-github-actions/variables#creating-configuration-variables-for-a-repository
