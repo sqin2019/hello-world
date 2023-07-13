@@ -3,4 +3,4 @@ policies:
   bindings:
     - members:
         - 'user:suhongq@google.com'
-      role: 'roles/cloudkms.cryptoOperator'
+      role: 'roles/viewer'
