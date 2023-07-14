@@ -300,3 +300,23 @@ jobs:
               issue_number: ${{ github.event.pull_request.number }},
               body: `${{ env.AOD_NOTE }}`,
             });
+
+  note:
+    runs-on: 'ubuntu-latest'
+    permissions:
+      pull-requests: 'write'
+    name: 'Add AOD Note'
+    steps:
+      - name: 'IAM Request Comment'
+        if: '${{ hashFiles(''iam.yaml'', ''tool.yaml'') != '''' }}'
+        uses: 'actions/github-script@98814c53be79b1d30f795b907e553d8679345975' # ratchet:actions/github-script@v6
+        with:
+          github-token: '${{ github.token }}'
+          retries: '3'
+          script: |+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ github.event.pull_request.number }},
+              body: ${{ env.AOD_NOTE }},
+            });
