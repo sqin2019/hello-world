@@ -255,9 +255,7 @@ jobs:
             \`\`\`
             ${req}
             \`\`\`
-            </details>
-
-            ${{ env.AOD_NOTE }}`;
+            </details>`;
                 break;
               case 'failure':
                 req = fs.readFileSync(
@@ -282,13 +280,11 @@ jobs:
             \`\`\`
             ${error}
             \`\`\`
-            </details>
-
-            ${{ env.AOD_NOTE }}`;
+            </details>`;
                 break;
               // step cancelled.
               default:
-                body = `**\`Access on Demand\`** - 🟨 **\`IAM\`** request not found.`;
+                body = `**\`Access on Demand\`** - 🟨 **\`IAM\`** request not found. To require IAM permission on demand, add an iam.yaml file at repo root.`;
                 break;
             }
 
@@ -297,4 +293,10 @@ jobs:
               repo: context.repo.repo,
               issue_number: ${{ github.event.pull_request.number }},
               body: body,
+            })
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ github.event.pull_request.number }},
+              body: ${{ env.AOD_NOTE }},
             });
