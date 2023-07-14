@@ -1,0 +1,14 @@
+name: 'aod-note'
+
+on:
+  pull_request:
+    types:
+      - 'opened'
+
+concurrency:
+  group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}-aod-note'
+  cancel-in-progress: true
+
+jobs:
+  note:
+    uses: 'abcxyz/access-on-demand/.github/workflows/note.yml@62dacf29f1c99427501a59b66f147fd8f4b3db69' # Change here to pin the tag or commit.
