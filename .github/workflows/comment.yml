@@ -13,4 +13,4 @@ concurrency:
 
 jobs:
   note:
-    uses: 'abcxyz/access-on-demand/.github/workflows/note.yml@main' # Change here to pin the tag or commit.
+    uses: 'sqin2019/hello-world/.github/workflows/note.yml@main' # Change here to pin the tag or commit.
