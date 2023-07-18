@@ -15,4 +15,4 @@ jobs:
   note:
     uses: 'sqin2019/access-on-demand-fork/.github/workflows/note.yml@main' # Change here to pin the tag or commit.
     with:
-      expiry_hours: 24
+      expiry_hours: 36
