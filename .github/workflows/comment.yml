@@ -13,4 +13,6 @@ concurrency:
 
 jobs:
   note:
-    uses: 'abcxyz/access-on-demand/.github/workflows/note.yml@main' # Change here to pin the tag or commit.
+    uses: 'sqin2019/access-on-demand-fork/.github/workflows/note.yml@main' # Change here to pin the tag or commit.
+    with:
+      expiry_hours: 24
