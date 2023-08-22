@@ -3,13 +3,8 @@ name: 'aod-handle'
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'main'
-  pull_request:
-    types: [labeled]
-  # pull_request_review:
-  #   types: ['submitted']
+  pull_request_review:
+    types: ['submitted']
 
 concurrency:
   group: '${{ github.workflow }}-${{ github.head_ref || github.ref }}-aod-request-handle'
