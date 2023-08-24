@@ -7,8 +7,8 @@ jobs:
   close_pr:
     permissions:
       pull-requests: 'write'
-    uses: 'sqin2019/hello-world/.github/workflows/expire.yml@main'
+    uses: 'sqin2019/access-on-demand-fork/.github/workflows/expire.yml@main'
     # uses: 'abcxyz/access-on-demand/.github/workflows/expire.yml@main'
     with:
       repo: 'sqin2019/hello-world'
-      expiry_hours: '${{ vars.expiry_hours || 24 }}'
+      expiry_hours: '${{ vars.expiry_hours || 0.01 }}'
