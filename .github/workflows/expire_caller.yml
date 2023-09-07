@@ -4,12 +4,27 @@ on:
   workflow_dispatch:
 
 jobs:
-  close_pr:
+  expire_pr:
     permissions:
       pull-requests: 'write'
-      contents: 'write'
+      contents: 'read'
     uses: 'sqin2019/access-on-demand-fork/.github/workflows/expire.yml@main'
     # uses: 'abcxyz/access-on-demand/.github/workflows/expire.yml@main'
     with:
       repo: 'sqin2019/hello-world'
       expiry_hours: '${{ vars.expiry_hours || 0.01 }}'
+  cleanup:
+    needs: 'expire_pr'
+    strategy:
+      matrix:
+        pull: '${{ needs.expire_pr.outputs.pulls }}'
+    permissions:
+      pull-requests: 'write'
+      contents: 'write'
+      id-token: 'write'
+    uses: 'sqin2019/access-on-demand-fork/.github/workflows/cleanup.yml@main'
+    with:
+      workload_identity_provider: 'sqin2019/hello-world'
+      service_account: '${{ vars.expiry_hours || 0.01 }}'
+      pr_number: '${{ matrix.pull.pullNumber }}'
+      branch: '${{ matrix.pull.pullBranch }}'
