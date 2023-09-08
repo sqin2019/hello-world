@@ -19,3 +19,5 @@ jobs:
     with:
       workload_identity_provider: 'projects/901968413216/locations/global/workloadIdentityPools/github-pool-c12c/providers/github-provider'
       service_account: 'hello-world-c12c-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'
+      pr_number: '${{ github.event.pull_request.number }}'
+      branch: '${{ github.event.pull_request.head.ref }}'
