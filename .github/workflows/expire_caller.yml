@@ -17,7 +17,7 @@ jobs:
     needs: 'expire_pr'
     strategy:
       matrix:
-        pull: '${{ needs.expire_pr.outputs.pulls }}'
+        pull: '${{ fromJSON(needs.expire_pr.outputs.pulls) }}'
     permissions:
       pull-requests: 'write'
       contents: 'write'
