@@ -20,7 +20,7 @@ jobs:
       expiry_hours: '${{ vars.expiry_hours || 0.01 }}'
   cleanup:
     needs: 'expire_pr'
-    if: ${{ fromJSON(needs.expire_pr.outputs.pulls) != '[]'}}
+    if: ${{ needs.expire_pr.outputs.pulls != '[]'}}
     strategy:
       matrix:
         pull: '${{ fromJSON(needs.expire_pr.outputs.pulls) }}'
