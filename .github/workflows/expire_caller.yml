@@ -25,6 +25,6 @@ jobs:
     uses: 'sqin2019/access-on-demand-fork/.github/workflows/cleanup.yml@main'
     with:
       workload_identity_provider: 'projects/901968413216/locations/global/workloadIdentityPools/github-pool-c12c/providers/github-provider'
-      service_account: 'hello-world-c12c-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'
+      service_account: 'hello-worl-c12c-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'
       pr_number: '${{ matrix.pull.pullNumber }}'
       branch: '${{ matrix.pull.pullBranch }}'
