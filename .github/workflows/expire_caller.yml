@@ -2,6 +2,11 @@ name: 'expire_caller'
 
 on:
   workflow_dispatch:
+  pull_request:
+    types: 'closed'
+    paths:
+      - 'tool.yaml'
+      - 'iam.yaml'
 
 jobs:
   expire_pr:
@@ -15,6 +20,7 @@ jobs:
       expiry_hours: '${{ vars.expiry_hours || 0.01 }}'
   cleanup:
     needs: 'expire_pr'
+    if: ${{ fromJSON(needs.expire_pr.outputs.pulls) != '[]'}}
     strategy:
       matrix:
         pull: '${{ fromJSON(needs.expire_pr.outputs.pulls) }}'
