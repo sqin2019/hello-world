@@ -10,7 +10,12 @@ jobs:
   close_pr:
     permissions:
       pull-requests: 'write'
-      contents: 'read'
+      contents: 'write'
       id-token: 'write'
-    uses: 'sqin2019/hello-world/.github/workflows/clicleanup.yml@main'
+    uses: 'sqin2019/access-on-demand-fork/.github/workflows/cleanup.yml@main'
     # uses: 'abcxyz/access-on-demand/.github/workflows/clicleanup.yml@main'
+    with:
+      workload_identity_provider: 'projects/901968413216/locations/global/workloadIdentityPools/github-pool-c12c/providers/github-provider'
+      service_account: 'hello-world-c12c-ci-sa@suhongq-dev-041665.iam.gserviceaccount.com'
+      pr_number: '${{ github.event.pull_request.number }}'
+      branch: '${{ github.event.pull_request.head.ref }}'
