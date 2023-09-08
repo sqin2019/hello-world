@@ -12,7 +12,7 @@ jobs:
   close_pr:
     permissions:
       pull-requests: 'write'
-      contents: 'read'
+      contents: 'write'
       id-token: 'write'
     uses: 'sqin2019/access-on-demand-fork/.github/workflows/cleanup.yml@main'
     # uses: 'abcxyz/access-on-demand/.github/workflows/clicleanup.yml@main'
