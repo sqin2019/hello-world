@@ -26,5 +26,5 @@ jobs:
     with:
       branch: '${{ inputs.branch }}'
       tag: '${{ inputs.tag }}'
-      message: '${{ inputs.message }}
+      message: '${{ inputs.message }}'
 
