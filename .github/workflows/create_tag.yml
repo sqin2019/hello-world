@@ -18,7 +18,17 @@ on:
         required: false
 
 jobs:
+  print-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: job summary
+        run: |
+          echo "### inputs" >> $GITHUB_STEP_SUMMARY
+          echo "- tag: ${{ inputs.tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "- branch: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- message: ${{ inputs.message }}" >> $GITHUB_STEP_SUMMARY
   create_tag:
+    needs: 'print-inputs'
     permissions:
       contents: 'write'
     uses: 'sqin2019/access-on-demand-fork/.github/workflows/reusable_create_tag.yml@main'
