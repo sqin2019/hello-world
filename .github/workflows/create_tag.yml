@@ -27,4 +27,5 @@ jobs:
       branch: '${{ inputs.branch }}'
       tag: '${{ inputs.tag }}'
       message: '${{ inputs.message }}'
+      env: 'tag'
 
