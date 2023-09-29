@@ -31,7 +31,9 @@ jobs:
           echo "### inputs" >> $GITHUB_STEP_SUMMARY
           echo "- tag: ${{ inputs.tag }}" >> $GITHUB_STEP_SUMMARY
           echo "- branch: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- annotated tag: ${{ inputs.annotated_tag }}" >> $GITHUB_STEP_SUMMARY
           echo "- message: ${{ inputs.message }}" >> $GITHUB_STEP_SUMMARY
+
   create_tag:
     needs: 'print-inputs'
     permissions:
