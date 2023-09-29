@@ -16,6 +16,11 @@ on:
         description: 'Message for the tag.'
         type: 'string'
         required: false
+      annotated_tag:
+        description: 'Whether to create an annotated tag, if false, only a lightweight tag will be created.'
+        type: boolean
+        default: true
+        required: false
 
 jobs:
   print-inputs:
@@ -38,4 +43,5 @@ jobs:
       tag: '${{ inputs.tag }}'
       message: '${{ inputs.message }}'
       env: 'tag'
+      annotated_tag: '${{ inputs.annotated_tag }}'
 
