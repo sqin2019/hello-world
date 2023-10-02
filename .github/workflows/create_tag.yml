@@ -40,12 +40,13 @@ jobs:
     needs: 'print-inputs'
     permissions:
       contents: 'write'
-    uses: 'sqin2019/access-on-demand-fork/.github/workflows/reusable_create_tag.yml@main'
-    # uses: 'abcxyz/access-on-demand/.github/workflows/clicleanup.yml@main'
-    with:
-      branch: '${{ inputs.branch }}'
-      tag: '${{ inputs.tag }}'
-      message: '${{ inputs.message }}'
-      env: 'void'
-      annotated_tag: '${{ inputs.annotated_tag }}'
+    steps:
+      - uses: 'sqin2019/access-on-demand-fork/.github/workflows/reusable_create_tag.yml@main'
+        # uses: 'abcxyz/access-on-demand/.github/workflows/clicleanup.yml@main'
+        with:
+          branch: '${{ inputs.branch }}'
+          tag: '${{ inputs.tag }}'
+          message: '${{ inputs.message }}'
+          env: 'void'
+          annotated_tag: '${{ inputs.annotated_tag }}'
 
