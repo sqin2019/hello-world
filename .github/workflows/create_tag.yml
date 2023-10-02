@@ -11,7 +11,7 @@ on:
         description: 'The branch to create tag from.'
         type: 'string'
         required: false
-        default: 'main'
+        # default: 'main'
       message:
         description: 'Message for the tag. Default is the tag name.'
         type: 'string'
@@ -35,18 +35,15 @@ jobs:
           echo "- message: ${{ inputs.message }}" >> $GITHUB_STEP_SUMMARY
 
   create_tag:
-    runs-on: ubuntu-latest
-    environment: 'tag'
     needs: 'print-inputs'
     permissions:
       contents: 'write'
-    steps:
-      - uses: 'sqin2019/access-on-demand-fork/.github/workflows/reusable_create_tag.yml@main'
-        # uses: 'abcxyz/access-on-demand/.github/workflows/clicleanup.yml@main'
-        with:
-          branch: '${{ inputs.branch }}'
-          tag: '${{ inputs.tag }}'
-          message: '${{ inputs.message }}'
-          env: 'void'
-          annotated_tag: '${{ inputs.annotated_tag }}'
+    uses: 'sqin2019/access-on-demand-fork/.github/workflows/reusable_create_tag.yml@main'
+    # uses: 'abcxyz/access-on-demand/.github/workflows/clicleanup.yml@main'
+    with:
+      branch: '${{ inputs.branch }}'
+      tag: '${{ inputs.tag }}'
+      message: '${{ inputs.message }}'
+      env: 'tag'
+      annotated_tag: '${{ inputs.annotated_tag }}'
 
