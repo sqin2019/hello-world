@@ -35,6 +35,8 @@ jobs:
           echo "- message: ${{ inputs.message }}" >> $GITHUB_STEP_SUMMARY
 
   create_tag:
+    runs-on: ubuntu-latest
+    environment: 'tag'
     needs: 'print-inputs'
     permissions:
       contents: 'write'
@@ -44,6 +46,6 @@ jobs:
       branch: '${{ inputs.branch }}'
       tag: '${{ inputs.tag }}'
       message: '${{ inputs.message }}'
-      env: 'tag'
+      env: 'void'
       annotated_tag: '${{ inputs.annotated_tag }}'
 
