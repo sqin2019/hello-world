@@ -13,19 +13,19 @@ on:
         required: false
 
 jobs:
-  print-inputs:
-    runs-on: ubuntu-latest
-    steps:
-      - name: job summary
-        run: |
-          echo "### Inputs" >> $GITHUB_STEP_SUMMARY
-          echo "- tag: ${{ inputs.tag }}" >> $GITHUB_STEP_SUMMARY
-          echo "- branch: ${{ github.event.repository.default_branch }}" >> $GITHUB_STEP_SUMMARY
-          echo "- annotated tag: true" >> $GITHUB_STEP_SUMMARY
-          echo "- message: ${{ inputs.message || inputs.tag }}" >> $GITHUB_STEP_SUMMARY
+  # print-inputs:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: job summary
+  #       run: |
+  #         echo "### Inputs" >> $GITHUB_STEP_SUMMARY
+  #         echo "- tag: ${{ inputs.tag }}" >> $GITHUB_STEP_SUMMARY
+  #         echo "- branch: ${{ github.event.repository.default_branch }}" >> $GITHUB_STEP_SUMMARY
+  #         echo "- annotated tag: true" >> $GITHUB_STEP_SUMMARY
+  #         echo "- message: ${{ inputs.message || inputs.tag }}" >> $GITHUB_STEP_SUMMARY
 
   create_tag:
-    needs: 'print-inputs'
+    # needs: 'print-inputs'
     permissions:
       contents: 'write'
     uses: 'sqin2019/access-on-demand-fork/.github/workflows/reusable_create_tag.yml@main'
@@ -38,11 +38,11 @@ jobs:
       annotated_tag: true
 
 
-  print-outputs:
-    runs-on: ubuntu-latest
-    needs: 'create_tag'
-    steps:
-      - name: job summary
-        run: |
-          echo "### outputs" >> $GITHUB_STEP_SUMMARY
-          echo "result: ${{ needs.create_tag.outputs.result }}" >> $GITHUB_STEP_SUMMARY
+  # print-outputs:
+  #   runs-on: ubuntu-latest
+  #   needs: 'create_tag'
+  #   steps:
+  #     - name: job summary
+  #       run: |
+  #         echo "### outputs" >> $GITHUB_STEP_SUMMARY
+  #         echo "result: ${{ needs.create_tag.outputs.result }}" >> $GITHUB_STEP_SUMMARY
