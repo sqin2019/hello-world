@@ -38,7 +38,7 @@ jobs:
     with:
       branch: '${{ inputs.branch }}'
       tag: '${{ inputs.tag }}'
-      message: '${{ inputs.message || inputs.tag}}'
+      message: '${{ inputs.message }}'
       env: 'tag'
       annotated_tag: true
 
