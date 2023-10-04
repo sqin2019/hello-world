@@ -40,7 +40,7 @@ jobs:
       tag: '${{ inputs.tag }}'
       # message: '${{ inputs.message }}'
       env: 'tag'
-      annotated_tag: true
+      annotated_tag: ''
 
 
   # print-outputs:
