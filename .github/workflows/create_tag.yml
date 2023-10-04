@@ -7,19 +7,9 @@ on:
         description: 'The name of the tag to be created.'
         type: 'string'
         required: true
-      branch:
-        description: 'The branch to create tag from.'
-        type: 'string'
-        required: false
-        # default: 'main'
       message:
         description: 'Message for the tag. Default is the tag name.'
         type: 'string'
-        required: false
-      annotated_tag:
-        description: 'Whether to create an annotated tag, if false, only a lightweight tag will be created.'
-        type: boolean
-        default: true
         required: false
 
 jobs:
@@ -28,11 +18,11 @@ jobs:
     steps:
       - name: job summary
         run: |
-          echo "### inputs" >> $GITHUB_STEP_SUMMARY
+          echo "### Inputs" >> $GITHUB_STEP_SUMMARY
           echo "- tag: ${{ inputs.tag }}" >> $GITHUB_STEP_SUMMARY
-          echo "- branch: ${{ inputs.branch }}" >> $GITHUB_STEP_SUMMARY
-          echo "- annotated tag: ${{ inputs.annotated_tag }}" >> $GITHUB_STEP_SUMMARY
-          echo "- message: ${{ inputs.message }}" >> $GITHUB_STEP_SUMMARY
+          echo "- branch: ${{ github.event.repository.default_branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- annotated tag: true" >> $GITHUB_STEP_SUMMARY
+          echo "- message: ${{ inputs.message || inputs.tag }}" >> $GITHUB_STEP_SUMMARY
 
   create_tag:
     needs: 'print-inputs'
@@ -41,11 +31,11 @@ jobs:
     uses: 'sqin2019/access-on-demand-fork/.github/workflows/reusable_create_tag.yml@main'
     # uses: 'abcxyz/access-on-demand/.github/workflows/clicleanup.yml@main'
     with:
-      branch: '${{ inputs.branch }}'
+      branch: '${{ github.event.repository.default_branch }}'
       tag: '${{ inputs.tag }}'
-      message: '${{ inputs.message }}'
+      message: '${{ inputs.message || inputs.tag}}'
       env: 'tag'
-      annotated_tag: '${{ inputs.annotated_tag }}'
+      annotated_tag: true
 
 
   print-outputs:
