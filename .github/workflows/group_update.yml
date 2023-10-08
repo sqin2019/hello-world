@@ -29,7 +29,7 @@ on:
         required: false
       dynamic_group:
         description: 'Dynamic group'
-        type: 'string'
+        type: 'boolean'
         required: false
       dynamic_group_query:
         description: 'Dynamic group query'
