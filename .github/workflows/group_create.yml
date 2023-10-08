@@ -3,6 +3,10 @@ name: 'create_group'
 on:
   workflow_dispatch:
     inputs:
+      team_folder:
+        description: 'The repo folder of this group'
+        type: 'string'
+        required: true
       name:
         description: 'Group name as in <GROUP_NAME>@example.com'
         type: 'string'
@@ -43,6 +47,7 @@ jobs:
       - name: job summary
         run: |
           echo "### Create Group Inputs" >> $GITHUB_STEP_SUMMARY
+          echo "- team folder: ${{ inputs.team_folder }}" >> $GITHUB_STEP_SUMMARY
           echo "- name: ${{ inputs.name }}" >> $GITHUB_STEP_SUMMARY
           echo "- description: ${{ inputs.description }}" >> $GITHUB_STEP_SUMMARY
           echo "- owner: ${{ inputs.owners }}" >> $GITHUB_STEP_SUMMARY
