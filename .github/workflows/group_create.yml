@@ -1,0 +1,52 @@
+name: 'create_group'
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Group name as in <GROUP_NAME>@example.com'
+        type: 'string'
+        required: true
+      description:
+        description: 'Group description'
+        type: 'string'
+        required: true
+      owners:
+        description: 'Group owners'
+        type: 'string'
+        required: true
+      managers:
+        description: 'Group managers (who have less permissions than owners)'
+        type: 'string'
+        required: false
+      members:
+        description: 'Group members'
+        type: 'string'
+        required: false
+      security_group:
+        description: 'Security group'
+        type: 'boolean'
+        required: false
+      dynamic_group:
+        description: 'Dynamic group'
+        type: 'string'
+        required: false
+      dynamic_group_query:
+        description: 'Dynamic group query'
+        type: 'string'
+        required: false
+
+jobs:
+  print-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: job summary
+        run: |
+          echo "### Create Group Inputs" >> $GITHUB_STEP_SUMMARY
+          echo "- name: ${{ inputs.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- description: ${{ inputs.description }}" >> $GITHUB_STEP_SUMMARY
+          echo "- owner: ${{ inputs.owners }}" >> $GITHUB_STEP_SUMMARY
+          echo "- managers: ${{ inputs.managers }}" >> $GITHUB_STEP_SUMMARY
+          echo "- members: ${{ inputs.members }}" >> $GITHUB_STEP_SUMMARY
+          echo "- security group: ${{ inputs.security_group }}" >> $GITHUB_STEP_SUMMARY
+          echo "- dynamic group: ${{ inputs.dynamic_group }}" >> $GITHUB_STEP_SUMMARY

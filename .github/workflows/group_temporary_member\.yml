@@ -1,0 +1,29 @@
+name: 'create_group_temporary_membership'
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Group name as in <GROUP_NAME>@example.com'
+        type: 'string'
+        required: true
+      members:
+        description: 'Group members'
+        type: 'string'
+        required: true
+      expiration:
+        description: 'Membership expiration'
+        type: 'string'
+        default: '2h'
+        required: false
+
+jobs:
+  print-inputs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: job summary
+        run: |
+          echo "### Grant Temporary Membership Inputs" >> $GITHUB_STEP_SUMMARY
+          echo "- name: ${{ inputs.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- members: ${{ inputs.members }}" >> $GITHUB_STEP_SUMMARY
+          echo "- expiration: ${{ inputs.expiration }}" >> $GITHUB_STEP_SUMMARY
