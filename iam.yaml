@@ -1,0 +1,9 @@
+policies:
+  - resource: 'projects/suhongq-dev-041665' # or folders/to-be-created
+    bindings:
+      - members:
+          - 'user:suhongq@tycho.joonix.net' # Use one of them or your tycho account
+        role: 'roles/pubsub.publisher'
+      - members:
+          - 'user:suhongq@tycho.joonix.net' # Use one of them or your tycho account
+        role: 'roles/pubsub.subscriber' # so that you can pull the message from the subscription.
